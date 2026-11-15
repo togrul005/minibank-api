@@ -3,15 +3,25 @@ package com.toghrulaliyev.minibank.model;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.PostLoad;
+import jakarta.persistence.PostPersist;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import org.springframework.data.domain.Persistable;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 
-/** Remembers which transfer an Idempotency-Key produced, so retries return the same result. */
+/**
+ * Remembers which transfer an Idempotency-Key produced, so retries return the same result.
+ * <p>
+ * Implements {@link Persistable} so that save() always does a plain INSERT.
+ * Without it, Spring Data would MERGE (select + update) and a second request with the
+ * same key would silently overwrite the first record instead of failing on the primary key.
+ */
 @Entity
 @Table(name = "idempotency_keys")
-public class IdempotencyRecord {
+public class IdempotencyRecord implements Persistable<String> {
 
     @Id
     @Column(name = "idempotency_key", length = 100)
@@ -33,6 +43,9 @@ public class IdempotencyRecord {
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
+    @Transient
+    private boolean isNew = true;
+
     protected IdempotencyRecord() {
         // for JPA
     }
@@ -46,6 +59,16 @@ public class IdempotencyRecord {
         this.toBalanceAfter = toBalanceAfter;
         this.createdAt = Instant.now();
     }
+
+    @Override
+    public String getId() { return key; }
+
+    @Override
+    public boolean isNew() { return isNew; }
+
+    @PostLoad
+    @PostPersist
+    void markNotNew() { this.isNew = false; }
 
     public String getKey() { return key; }
     public String getRequestHash() { return requestHash; }

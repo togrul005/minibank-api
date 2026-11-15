@@ -18,13 +18,13 @@ function SuccessView({ result, onAgain }: { result: TransferResult; onAgain: () 
   return (
     <div role="status" className="flex flex-col gap-10">
       <div>
-        <p className="text-sm font-bold uppercase tracking-[0.08em] text-accent">Sent</p>
+        <p className="text-sm font-bold uppercase tracking-[0.08em] text-positive">Sent</p>
         <p className="mt-4"><BigAmount value={result.amount} size="xl" /></p>
         <p className="mt-4 text-xl">
           {result.fromId} <ArrowRight aria-label="to" className="inline size-5 align-[-3px]" /> {result.toId}
         </p>
       </div>
-      <dl className="grid max-w-xl grid-cols-2 border-t border-ink text-[15px]">
+      <dl className="grid max-w-xl grid-cols-2 border-t border-line text-[15px]">
         <dt className="border-b border-rule py-3 text-muted">{result.fromId} now</dt>
         <dd className="border-b border-rule py-3 text-right font-bold tabular-nums">{formatMoney(result.fromBalanceAfter)}</dd>
         <dt className="border-b border-rule py-3 text-muted">{result.toId} now</dt>
@@ -151,7 +151,7 @@ export function TransferPage() {
 
         <aside className="md:col-span-5">
           <Section title="Summary">
-            <dl className="grid grid-cols-2 border-t border-ink text-[15px]">
+            <dl className="grid grid-cols-2 border-t border-line text-[15px]">
               <dt className="border-b border-rule py-3 text-muted">From</dt>
               <dd className="border-b border-rule py-3 text-right font-bold">{fromId || '—'}</dd>
               <dt className="border-b border-rule py-3 text-muted">To</dt>

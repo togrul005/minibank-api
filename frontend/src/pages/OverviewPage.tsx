@@ -17,7 +17,7 @@ export function OverviewPage() {
   if (list.length === 0) {
     return (
       <div className="max-w-xl">
-        <h1 className="text-5xl font-bold leading-none tracking-[-0.03em] md:text-7xl">No accounts yet</h1>
+        <h1 className="font-display text-5xl font-bold leading-none tracking-[-0.03em] md:text-7xl">No accounts yet</h1>
         <p className="mt-4 text-lg text-muted">Open your first account to start moving money.</p>
         <Link to="/accounts" className={`${linkButton.primary} mt-8`}>Open an account</Link>
       </div>
@@ -26,7 +26,7 @@ export function OverviewPage() {
 
   return (
     <div className="flex flex-col gap-16 md:gap-20">
-      <div className="grid grid-cols-1 gap-10 md:grid-cols-12">
+      <div className="hero-surface grid grid-cols-1 gap-10 md:grid-cols-12">
         <div className="md:col-span-8">
           <p className="text-sm font-bold uppercase tracking-[0.08em]">Total balance</p>
           <h1 className="mt-4">
@@ -46,7 +46,7 @@ export function OverviewPage() {
       </div>
 
       <Section title="Accounts" aside={<Link to="/accounts" className={linkButton.quiet}>Manage</Link>}>
-        <ul className="border-t border-ink">
+        <ul className="stagger border-t border-line">
           {list.map((a) => (
             <li key={a.id} className="border-b border-rule">
               <Link
@@ -54,7 +54,7 @@ export function OverviewPage() {
                 className="group grid grid-cols-[1fr_auto] items-baseline gap-x-6 gap-y-1 py-5 text-ink no-underline md:grid-cols-12"
                 aria-label={`${a.id}, balance ${formatMoney(a.balance)}. View history`}
               >
-                <span className="text-xl font-bold group-hover:text-accent md:col-span-5">{a.id}</span>
+                <span className="text-xl font-bold font-display transition-colors duration-200 group-hover:text-accent md:col-span-5">{a.id}</span>
                 <span className="order-3 text-sm text-muted md:order-none md:col-span-3">Opened {formatDate(a.createdAt)}</span>
                 <span className="text-right text-2xl font-bold tabular-nums tracking-[-0.02em] md:col-span-4">
                   {formatMoney(a.balance)}

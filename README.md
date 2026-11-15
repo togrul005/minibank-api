@@ -4,7 +4,7 @@
 
 A concurrency-safe banking app: **Spring Boot 4 + PostgreSQL** API with a **React** frontend.
 
-![Overview](docs/screenshots/overview.png)
+![Aurora theme](docs/screenshots/MiniBank-aurora.png)
 
 ## Features
 - Accounts: create, get, list (paged)
@@ -59,7 +59,16 @@ Docker must be running (Testcontainers starts a real PostgreSQL):
 ```
 
 ## Frontend
-Swiss-style design: white surface, one sans family, one accent colour (Yves Klein Blue), hairline rules, left-aligned type. Large balances are set as a single figure with raised cents.
+Four switchable themes (header menu, saved in the browser, or `?theme=aurora|organic|retro|swiss` in the URL). Each one is a complete design direction with its own palette, fonts, shapes, texture and motion:
+
+| Theme | Look | Motion |
+|---|---|---|
+| **Aurora** (default) | Dark, violet / magenta / cyan glow, glass cards, gradient numbers (Inter) | Drifting gradient light, spring page and list entrances, lift on hover |
+| **Organic** | Sand and earth tones, moss balance card, rounded cards, paper grain (Fraunces + Epilogue) | Slow "breathing" balance card and background shapes, gentle easing |
+| **Retro** | Synthwave terminal: black, magenta + cyan neon, scanlines, grid floor (VT323 + Space Mono) | Typewriter page titles, blinking caret, stepped entrances, moving grid |
+| **Swiss** | White, one sans family, Klein Blue, hairline rules | Rules draw in, quiet fades |
+
+All themes: balances count up when they change, pages and table rows animate in, and everything is switched off for users with *reduce motion* turned on. Fonts are bundled with the app (no Google Fonts requests).
 
 | Page | What it does |
 |---|---|
@@ -70,9 +79,9 @@ Swiss-style design: white surface, one sans family, one accent colour (Yves Klei
 
 Also: live API status (`/actuator/health`), keyboard focus styles, labelled form errors, reduced-motion support, mobile layout.
 
-| Transfer | History |
+| Organic | Retro |
 |---|---|
-| ![Transfer](docs/screenshots/transfer.png) | ![History](docs/screenshots/history.png) |
+| ![Organic](docs/screenshots/MiniBank-organic.png) | ![Retro](docs/screenshots/MiniBank-retro.png) |
 
 ## Endpoints (`/api/v1`)
 

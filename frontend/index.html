@@ -5,6 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="MiniBank — accounts, transfers and history" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script>
+      // apply the theme before first paint (no flash)
+      (function () {
+        var ids = ['aurora', 'organic', 'retro', 'swiss'];
+        var t = new URLSearchParams(location.search).get('theme');
+        if (ids.indexOf(t) < 0) { try { t = localStorage.getItem('minibank.theme'); } catch (e) {} }
+        document.documentElement.dataset.theme = ids.indexOf(t) < 0 ? 'aurora' : t;
+      })();
+    </script>
     <title>MiniBank</title>
   </head>
   <body>

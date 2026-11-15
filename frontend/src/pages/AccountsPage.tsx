@@ -108,7 +108,7 @@ function MoneyPanel({ account, mode, onClose }: {
 
   const verb = mode === 'deposit' ? 'Deposit' : 'Withdraw'
   return (
-    <form onSubmit={submit} noValidate className="grid gap-5 bg-neutral p-5 md:grid-cols-12 md:items-end">
+    <form onSubmit={submit} noValidate className="page-enter grid gap-5 rounded-box bg-neutral p-5 md:grid-cols-12 md:items-end">
       <div className="md:col-span-12">
         <p className="font-bold">{verb} {mode === 'deposit' ? 'into' : 'from'} {account.id}</p>
       </div>
@@ -172,14 +172,14 @@ export function AccountsPage() {
                   <table className="w-full min-w-[600px] border-collapse text-left text-[15px]">
                     <caption className="sr-only">All accounts</caption>
                     <thead>
-                      <tr className="border-b border-ink text-xs font-bold uppercase tracking-[0.08em]">
+                      <tr className="border-b border-line text-xs font-bold uppercase tracking-[0.08em]">
                         <th scope="col" className="py-3 pr-4">Account</th>
                         <th scope="col" className="py-3 pr-4">Opened</th>
                         <th scope="col" className="py-3 pr-4 text-right">Balance</th>
                         <th scope="col" className="py-3 text-right"><span className="sr-only">Actions</span></th>
                       </tr>
                     </thead>
-                    <tbody>
+                    <tbody className="stagger">
                       {data.content.map((a) => {
                         const isOpen = open?.id === a.id
                         return (

@@ -31,7 +31,7 @@ export function MovementTable({ items, accountId, showId = false, caption }: {
       <table className="w-full min-w-[640px] border-collapse text-left text-[15px]">
         <caption className="sr-only">{caption}</caption>
         <thead>
-          <tr className="border-b border-ink text-xs font-bold uppercase tracking-[0.08em]">
+          <tr className="border-b border-line text-xs font-bold uppercase tracking-[0.08em]">
             <th scope="col" className="py-3 pr-4">Date</th>
             <th scope="col" className="py-3 pr-4">Type</th>
             <th scope="col" className="py-3 pr-4">Details</th>
@@ -39,7 +39,7 @@ export function MovementTable({ items, accountId, showId = false, caption }: {
             <th scope="col" className="py-3 text-right">Amount</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="stagger">
           {items.map((t) => {
             const dir = direction(t, accountId)
             const Icon = typeIcon[t.type]
@@ -58,7 +58,7 @@ export function MovementTable({ items, accountId, showId = false, caption }: {
                   <td className="py-4 pr-4 font-mono text-sm text-muted" title={t.id}>{t.id.slice(0, 8)}</td>
                 ) : null}
                 <td
-                  className={`whitespace-nowrap py-4 text-right font-bold tabular-nums ${dir === 'in' ? 'text-accent' : 'text-ink'}`}
+                  className={`whitespace-nowrap py-4 text-right font-bold tabular-nums ${dir === 'in' ? 'text-positive' : dir === 'out' ? 'text-negative' : 'text-ink'}`}
                 >
                   <span className="sr-only">{dir === 'in' ? 'Incoming ' : dir === 'out' ? 'Outgoing ' : ''}</span>
                   {sign}

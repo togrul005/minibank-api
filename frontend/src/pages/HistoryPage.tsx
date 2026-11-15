@@ -95,8 +95,8 @@ export function HistoryPage() {
                   type="button"
                   aria-pressed={on}
                   onClick={() => update({ type: f.value === 'ALL' ? null : f.value })}
-                  className={`min-h-11 border px-4 text-sm font-bold transition-colors duration-200 ${
-                    on ? 'border-accent bg-accent text-white' : 'border-ink bg-paper text-ink hover:bg-neutral'
+                  className={`rounded-chip min-h-11 border px-4 text-sm font-bold transition-all duration-200 active:scale-95 ${
+                    on ? 'chip-on border-accent bg-accent text-on-accent' : 'border-line bg-transparent text-ink hover:bg-neutral'
                   }`}
                 >
                   {f.label}

@@ -44,19 +44,19 @@
 [data-theme="aurora"] {
   --font-sans: "Inter Variable", "Inter", system-ui, sans-serif;
   --font-display: "Inter Variable", "Inter", system-ui, sans-serif;
-  --color-paper: #0B0820;
-  --color-surface: rgba(255, 255, 255, 0.06);
-  --color-neutral: rgba(255, 255, 255, 0.08);
-  --color-ink: #F5F3FF;
-  --color-muted: #B9B3DC;
-  --color-rule: rgba(255, 255, 255, 0.12);
-  --color-line: rgba(255, 255, 255, 0.28);
-  --color-accent: #8F75FF;     /* 5:1 on the dark page */
-  --color-accent-ink: #A894FF;
-  --color-on-accent: #FFFFFF;
-  --color-positive: #4BF0C0;
-  --color-negative: #FF8FB8;
-  --color-danger: #FF6B8A;
+  --color-paper: #050705;      /* near black */
+  --color-surface: rgba(255, 255, 255, 0.05);
+  --color-neutral: rgba(255, 255, 255, 0.07);
+  --color-ink: #F2F7F2;
+  --color-muted: #A3B2A6;
+  --color-rule: rgba(255, 255, 255, 0.10);
+  --color-line: rgba(255, 255, 255, 0.24);
+  --color-accent: #B8FF2C;     /* lightning green */
+  --color-accent-ink: #D2FF6E;
+  --color-on-accent: #060806;
+  --color-positive: #4DFF8A;
+  --color-negative: #FF8A8A;
+  --color-danger: #FF6B6B;
   --radius-box: 24px;
   --radius-control: 14px;
   --radius-chip: 999px;
@@ -196,46 +196,52 @@
 /* ------------------------------------------------------------------ AURORA */
 
 [data-theme="aurora"] { --enter-dur: 700ms; --enter-ease: cubic-bezier(.34,1.56,.64,1); }
-[data-theme="aurora"] .theme-bg { display: block; background: #0B0820; }
+[data-theme="aurora"] .theme-bg { display: block; background: #050705; }
 [data-theme="aurora"] .theme-bg span {
-  position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.55; will-change: transform;
+  position: absolute; border-radius: 50%; filter: blur(100px); will-change: transform;
 }
-[data-theme="aurora"] .theme-bg span:nth-child(1) { width: 52vw; height: 52vw; left: -12vw; top: -18vw; background: #5D34D0; animation: drift-a 22s ease-in-out infinite alternate; }
-[data-theme="aurora"] .theme-bg span:nth-child(2) { width: 40vw; height: 40vw; right: -10vw; top: 10vh; background: #FF006E; opacity: 0.35; animation: drift-b 26s ease-in-out infinite alternate; }
-[data-theme="aurora"] .theme-bg span:nth-child(3) { width: 46vw; height: 46vw; left: 25vw; bottom: -30vw; background: #00C2E0; opacity: 0.38; animation: drift-c 30s ease-in-out infinite alternate; }
+[data-theme="aurora"] .theme-bg span:nth-child(1) { width: 50vw; height: 50vw; left: -14vw; top: -22vw; background: #1F9D3A; opacity: 0.45; animation: drift-a 22s ease-in-out infinite alternate; }
+[data-theme="aurora"] .theme-bg span:nth-child(2) { width: 34vw; height: 34vw; right: -10vw; top: 18vh; background: #B8FF2C; opacity: 0.16; animation: drift-b 26s ease-in-out infinite alternate; }
+[data-theme="aurora"] .theme-bg span:nth-child(3) { width: 44vw; height: 44vw; left: 28vw; bottom: -32vw; background: #0E5C2A; opacity: 0.5; animation: drift-c 30s ease-in-out infinite alternate; }
 @keyframes drift-a { to { transform: translate(14vw, 10vh) scale(1.15); } }
 @keyframes drift-b { to { transform: translate(-12vw, 18vh) scale(0.9); } }
 @keyframes drift-c { to { transform: translate(-10vw, -12vh) scale(1.1); } }
 
-[data-theme="aurora"] .app-header { border-bottom-color: var(--color-rule); background: rgba(11, 8, 32, 0.55); backdrop-filter: blur(18px); }
+[data-theme="aurora"] .app-header { border-bottom-color: var(--color-rule); background: rgba(5, 7, 5, 0.6); backdrop-filter: blur(18px); }
 [data-theme="aurora"] .section-surface,
 [data-theme="aurora"] .hero-surface,
 [data-theme="aurora"] .glass {
-  background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.045); border: 1px solid rgba(255, 255, 255, 0.10);
   backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
 }
-[data-theme="aurora"] .hero-surface { padding: 2.25rem; border-radius: var(--radius-box); }
+/* the balance card: dark green glow rising from the bottom, like a lit panel */
+[data-theme="aurora"] .hero-surface {
+  padding: 2.25rem; border-radius: var(--radius-box);
+  background: radial-gradient(120% 140% at 20% 120%, rgba(56, 200, 90, 0.38), rgba(10, 40, 18, 0.55) 45%, rgba(255,255,255,0.03) 75%);
+  border-color: rgba(184, 255, 44, 0.18);
+}
 [data-theme="aurora"] .amount-figure {
-  background: linear-gradient(100deg, #FFFFFF 10%, #C9B8FF 45%, #7FF3FF 90%);
+  background: linear-gradient(100deg, #FFFFFF 15%, #E4FFB0 50%, #B8FF2C 90%);
   -webkit-background-clip: text; background-clip: text; color: transparent;
 }
 [data-theme="aurora"] .btn-primary {
-  background-image: linear-gradient(100deg, #5D34D0, #A23BEA 50%, #0FA3C4);
-  box-shadow: 0 8px 30px -8px rgba(123, 92, 255, 0.7);
+  background: #B8FF2C; color: #060806;
+  box-shadow: 0 0 0 1px rgba(184, 255, 44, 0.4), 0 10px 30px -8px rgba(184, 255, 44, 0.55);
 }
-[data-theme="aurora"] .btn-primary:hover:not(:disabled) { transform: translateY(-2px) scale(1.02); box-shadow: 0 12px 40px -8px rgba(123, 92, 255, 0.9); }
-[data-theme="aurora"] .chip-on { background-image: linear-gradient(100deg, #5D34D0, #A23BEA 50%, #0FA3C4); border-color: transparent; color: #FFFFFF; box-shadow: 0 6px 20px -6px rgba(123, 92, 255, 0.8); }
-[data-theme="aurora"] .acct-card { border: 1px solid rgba(255,255,255,0.14); box-shadow: 0 18px 40px -18px rgba(0,0,0,0.8); }
-[data-theme="aurora"] .acct-card-0 { background: linear-gradient(135deg, #3B1E9E 0%, #7B3FE4 55%, #B05CFF 100%); }
-[data-theme="aurora"] .acct-card-1 { background: linear-gradient(135deg, #064E5C 0%, #0E8BA8 55%, #2CD3C4 100%); }
-[data-theme="aurora"] .acct-card-2 { background: linear-gradient(135deg, #5A1240 0%, #A3195B 55%, #E0447F 100%); }
-[data-theme="aurora"] .acct-card:hover { box-shadow: 0 24px 50px -16px rgba(123, 92, 255, 0.6); }
-[data-theme="aurora"] .quick-action { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.16); backdrop-filter: blur(12px); }
-[data-theme="aurora"] .quick-action-primary { background-image: linear-gradient(135deg, #5D34D0, #A23BEA 50%, #0FA3C4); border: 0; color: #FFFFFF; box-shadow: 0 10px 28px -8px rgba(123, 92, 255, 0.85); }
-[data-theme="aurora"] .tab-bar { background: rgba(20, 14, 48, 0.72); border-color: rgba(255,255,255,0.14); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
-[data-theme="aurora"] .glow { text-shadow: 0 0 20px rgba(123, 92, 255, 0.8); }
-[data-theme="aurora"] .nav-active { text-shadow: 0 0 16px rgba(123, 92, 255, 0.9); }
-[data-theme="aurora"] .status-dot { box-shadow: 0 0 10px 2px var(--color-positive); background: var(--color-positive); border-radius: 50%; }
+[data-theme="aurora"] .btn-primary:hover:not(:disabled) { background: #D2FF6E; transform: translateY(-2px) scale(1.02); box-shadow: 0 0 0 1px rgba(184, 255, 44, 0.6), 0 14px 40px -8px rgba(184, 255, 44, 0.75); }
+[data-theme="aurora"] .chip-on { background: #B8FF2C; border-color: transparent; color: #060806; box-shadow: 0 6px 20px -6px rgba(184, 255, 44, 0.7); }
+[data-theme="aurora"] .acct-card { border: 1px solid rgba(255,255,255,0.10); box-shadow: 0 18px 40px -18px rgba(0,0,0,0.9); }
+[data-theme="aurora"] .acct-card-0 { background: linear-gradient(140deg, #0B2E14 0%, #17652C 60%, #2FA84A 100%); }
+[data-theme="aurora"] .acct-card-1 { background: linear-gradient(140deg, #8FE01A 0%, #B8FF2C 55%, #E2FF8A 100%); color: #060806; }
+[data-theme="aurora"] .acct-card-2 { background: linear-gradient(140deg, #0B0D0B 0%, #161A16 60%, #1F2A1F 100%); border-color: rgba(184, 255, 44, 0.35); }
+[data-theme="aurora"] .acct-card-1::after { background: radial-gradient(circle, transparent 38%, rgba(0,0,0,0.08) 39%, transparent 46%, rgba(0,0,0,0.06) 52%, transparent 60%); }
+[data-theme="aurora"] .acct-card:hover { box-shadow: 0 24px 50px -16px rgba(184, 255, 44, 0.35); }
+[data-theme="aurora"] .quick-action { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.14); backdrop-filter: blur(12px); }
+[data-theme="aurora"] .quick-action-primary { background: #B8FF2C; border: 0; color: #060806; box-shadow: 0 0 24px -2px rgba(184, 255, 44, 0.6); }
+[data-theme="aurora"] .tab-bar { background: rgba(10, 14, 10, 0.78); border-color: rgba(255,255,255,0.12); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+[data-theme="aurora"] .glow { text-shadow: 0 0 20px rgba(184, 255, 44, 0.7); }
+[data-theme="aurora"] .nav-active { text-shadow: 0 0 14px rgba(184, 255, 44, 0.8); }
+[data-theme="aurora"] .status-dot { box-shadow: 0 0 10px 2px var(--color-accent); background: var(--color-accent); border-radius: 50%; }
 
 /* ------------------------------------------------------------------ ORGANIC */
 

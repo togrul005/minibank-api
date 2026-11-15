@@ -63,7 +63,7 @@ Four switchable themes (header menu, saved in the browser, or `?theme=aurora|org
 
 | Theme | Look | Motion |
 |---|---|---|
-| **Aurora** (default) | Dark, violet / magenta / cyan glow, glass cards, gradient numbers (Inter) | Drifting gradient light, spring page and list entrances, lift on hover |
+| **Aurora** (default) | Black with lightning-green (#B8FF2C) glow, glass cards, green gradient account cards (Inter) | Drifting green light, spring page and list entrances, lift on hover |
 | **Organic** | Sand and earth tones, moss balance card, rounded cards, paper grain (Fraunces + Epilogue) | Slow "breathing" balance card and background shapes, gentle easing |
 | **Retro** | Synthwave terminal: black, magenta + cyan neon, scanlines, grid floor (VT323 + Space Mono) | Typewriter page titles, blinking caret, stepped entrances, moving grid |
 | **Swiss** | White, one sans family, Klein Blue, hairline rules | Rules draw in, quiet fades |

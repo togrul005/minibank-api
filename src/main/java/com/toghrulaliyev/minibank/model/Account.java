@@ -25,6 +25,7 @@ public class Account {
 
     /** Optimistic-locking safety net: Hibernate increments it on every update. */
     @Version
+    @Column(nullable = false)
     private Long version;
 
     @Column(name = "created_at", nullable = false)

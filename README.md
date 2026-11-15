@@ -2,7 +2,9 @@
 
 ![CI](https://github.com/togrul005/minibank-api/actions/workflows/ci.yml/badge.svg)
 
-A concurrency-safe banking REST API built with **Spring Boot 4** and **PostgreSQL**.
+A concurrency-safe banking app: **Spring Boot 4 + PostgreSQL** API with a **React** frontend.
+
+![Overview](docs/screenshots/overview.png)
 
 ## Features
 - Accounts: create, get, list (paged)
@@ -20,7 +22,8 @@ A concurrency-safe banking REST API built with **Spring Boot 4** and **PostgreSQ
 | Data | PostgreSQL 16, Spring Data JPA (Hibernate), Flyway migrations |
 | Docs | springdoc-openapi (Swagger UI) |
 | Tests | JUnit 5, MockMvc, Testcontainers (real PostgreSQL) |
-| DevOps | Docker, docker-compose, GitHub Actions |
+| Frontend | React 19, TypeScript, Vite, Tailwind CSS 4, TanStack Query, React Router, Vitest |
+| DevOps | Docker, docker-compose, nginx, GitHub Actions |
 
 ## Run
 
@@ -36,15 +39,40 @@ docker compose up -d db
 ```
 
 Then open:
+- **App: http://localhost:3000**
 - API: http://localhost:8080/api/v1/accounts
 - Swagger UI: http://localhost:8080/swagger-ui.html
 - Health: http://localhost:8080/actuator/health
+
+### Frontend dev server (hot reload)
+```bash
+docker compose up -d db app     # backend
+cd frontend
+npm install
+npm run dev                     # http://localhost:5173 (proxies /api to :8080)
+```
 
 ### Run tests
 Docker must be running (Testcontainers starts a real PostgreSQL):
 ```bash
 ./mvnw verify
 ```
+
+## Frontend
+Swiss-style design: white surface, one sans family, one accent colour (Yves Klein Blue), hairline rules, left-aligned type. Large balances are set as a single figure with raised cents.
+
+| Page | What it does |
+|---|---|
+| Overview | Total balance, all accounts, latest movements across accounts |
+| Accounts | Open an account; deposit / withdraw inline with a live new-balance preview |
+| Transfer | From / To / Amount with validation; sends an `Idempotency-Key` so retries are safe |
+| History | Per-account movements, type filter, page size, pagination (state kept in the URL) |
+
+Also: live API status (`/actuator/health`), keyboard focus styles, labelled form errors, reduced-motion support, mobile layout.
+
+| Transfer | History |
+|---|---|
+| ![Transfer](docs/screenshots/transfer.png) | ![History](docs/screenshots/history.png) |
 
 ## Endpoints (`/api/v1`)
 
@@ -89,4 +117,5 @@ model/       JPA entities (Account, Transfer, IdempotencyRecord)
 repository/  Spring Data repositories
 service/     Business logic, transactions, locking
 resources/db/migration/  Flyway SQL migrations
+frontend/    React app (src/api, src/components, src/pages)
 ```

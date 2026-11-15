@@ -24,9 +24,16 @@ services:
       DB_URL: jdbc:postgresql://db:5432/minibank
       DB_USER: minibank
       DB_PASSWORD: minibank
-      CORS_ORIGINS: http://localhost:5173
+      CORS_ORIGINS: http://localhost:5173,http://localhost:3000
     ports:
       - "8080:8080"
+
+  web:
+    build: ./frontend
+    depends_on:
+      - app
+    ports:
+      - "3000:80"
 
 volumes:
   pgdata:

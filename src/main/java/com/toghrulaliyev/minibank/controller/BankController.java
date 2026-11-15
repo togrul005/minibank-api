@@ -1,21 +1,37 @@
 package com.toghrulaliyev.minibank.controller;
 
-import com.toghrulaliyev.minibank.controller.BankController.TransferDetailsResponse;
-import com.toghrulaliyev.minibank.model.Account;
-import com.toghrulaliyev.minibank.model.Transfer;
+import com.toghrulaliyev.minibank.dto.AccountResponse;
+import com.toghrulaliyev.minibank.dto.AmountRequest;
+import com.toghrulaliyev.minibank.dto.CreateAccountRequest;
+import com.toghrulaliyev.minibank.dto.OperationResponse;
+import com.toghrulaliyev.minibank.dto.PageResponse;
+import com.toghrulaliyev.minibank.dto.TransferDetailsResponse;
+import com.toghrulaliyev.minibank.dto.TransferRequest;
+import com.toghrulaliyev.minibank.dto.TransferResponse;
 import com.toghrulaliyev.minibank.service.BankService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Size;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
-
-import java.math.BigDecimal;
-import java.time.Instant;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1")
+@Tag(name = "MiniBank", description = "Accounts, deposits, withdrawals and transfers")
 public class BankController {
 
     private final BankService bankService;
@@ -24,111 +40,68 @@ public class BankController {
         this.bankService = bankService;
     }
 
-    // --- Accounts ---
+    // ---------------------------------------------------------------- accounts
 
+    @Operation(summary = "Create an account")
     @PostMapping("/accounts")
     @ResponseStatus(HttpStatus.CREATED)
     public AccountResponse createAccount(@Valid @RequestBody CreateAccountRequest req) {
-        Account created = bankService.createAccount(req.id(), req.initialBalance());
-        return AccountResponse.from(created);
+        return AccountResponse.from(bankService.createAccount(req.id(), req.initialBalance()));
     }
 
+    @Operation(summary = "List all accounts (paged)")
+    @GetMapping("/accounts")
+    public PageResponse<AccountResponse> listAccounts(
+            @RequestParam(defaultValue = "0") @Min(0) int page,
+            @RequestParam(defaultValue = "20") @Min(1) @Max(200) int size) {
+        var pageable = PageRequest.of(page, size, Sort.by("createdAt").and(Sort.by("id")));
+        return PageResponse.from(bankService.listAccounts(pageable), AccountResponse::from);
+    }
+
+    @Operation(summary = "Get one account")
     @GetMapping("/accounts/{id}")
     public AccountResponse getAccount(@PathVariable String id) {
-        Account acc = bankService.getAccount(id);
-        return AccountResponse.from(acc);
+        return AccountResponse.from(bankService.getAccount(id));
     }
 
-    // --- Transfers ---
+    @Operation(summary = "Deposit money into an account")
+    @PostMapping("/accounts/{id}/deposit")
+    public OperationResponse deposit(@PathVariable String id, @Valid @RequestBody AmountRequest req) {
+        return OperationResponse.from(bankService.deposit(id, req.amount()));
+    }
 
+    @Operation(summary = "Withdraw money from an account")
+    @PostMapping("/accounts/{id}/withdraw")
+    public OperationResponse withdraw(@PathVariable String id, @Valid @RequestBody AmountRequest req) {
+        return OperationResponse.from(bankService.withdraw(id, req.amount()));
+    }
+
+    @Operation(summary = "Transaction history of an account, newest first (paged)")
+    @GetMapping("/accounts/{id}/transfers")
+    public PageResponse<TransferDetailsResponse> getAccountTransfers(
+            @PathVariable String id,
+            @RequestParam(defaultValue = "0") @Min(0) int page,
+            @RequestParam(defaultValue = "20") @Min(1) @Max(200) int size) {
+        var pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt", "id"));
+        return PageResponse.from(bankService.getTransfersForAccount(id, pageable), TransferDetailsResponse::from);
+    }
+
+    // --------------------------------------------------------------- transfers
+
+    @Operation(summary = "Transfer money between two accounts",
+            description = "Send the same Idempotency-Key again to safely retry: money moves only once.")
     @PostMapping("/transfers")
     public TransferResponse transfer(
-            @RequestHeader(value = "Idempotency-Key", required = false) String idempotencyKey,
-            @Valid @RequestBody TransferRequest req
-    ) {
-        BankService.TransferOutcome outcome =
-                bankService.transfer(req.fromId(), req.toId(), req.amount(), idempotencyKey);
-
-        return new TransferResponse(
-                outcome.transferId(),
-                outcome.fromId(),
-                outcome.toId(),
-                outcome.amount(),
-                outcome.fromBalanceAfter(),
-                outcome.toBalanceAfter()
-        );
+            @Parameter(description = "Optional key for safe retries")
+            @RequestHeader(value = "Idempotency-Key", required = false) @Size(max = 100) String idempotencyKey,
+            @Valid @RequestBody TransferRequest req) {
+        return TransferResponse.from(
+                bankService.transfer(req.fromId(), req.toId(), req.amount(), idempotencyKey));
     }
 
+    @Operation(summary = "Get one transfer")
     @GetMapping("/transfers/{id}")
     public TransferDetailsResponse getTransfer(@PathVariable String id) {
-        Transfer t = bankService.getTransfer(id);
-        return new TransferDetailsResponse(
-                t.getId(),
-                t.getFromId(),
-                t.getToId(),
-                t.getAmount(),
-                t.getCreatedAt()
-        );
+        return TransferDetailsResponse.from(bankService.getTransfer(id));
     }
-
-    @GetMapping("/accounts/{id}/transfers")
-    public java.util.List<TransferDetailsResponse> getAccountTransfers(
-            @PathVariable String id,
-            @RequestParam(value = "limit", defaultValue = "50") int limit
-    ) {
-        if (limit < 1 || limit > 200) {
-            throw new IllegalArgumentException("limit must be between 1 and 200");
-        }
-
-        return bankService.getTransfersForAccount(id).stream()
-                .limit(limit)
-                .map(t -> new TransferDetailsResponse(
-                        t.getId(),
-                        t.getFromId(),
-                        t.getToId(),
-                        t.getAmount(),
-                        t.getCreatedAt()
-                ))
-                .toList();
-    }
-
-
-
-    // --- DTOs ---
-
-    public record CreateAccountRequest(
-        @NotBlank
-        @jakarta.validation.constraints.Size(max = 32)
-        String id,
-        @NotNull @Positive BigDecimal initialBalance
-) {}
-
-    public record AccountResponse(String id, BigDecimal balance) {
-        static AccountResponse from(Account a) {
-            return new AccountResponse(a.getId(), a.getBalance());
-        }
-    }
-
-    public record TransferRequest(
-        @NotBlank @jakarta.validation.constraints.Size(max = 32) String fromId,
-        @NotBlank @jakarta.validation.constraints.Size(max = 32) String toId,
-        @NotNull @Positive BigDecimal amount
-) {}
-
-    public record TransferResponse(
-            String transferId,
-            String fromId,
-            String toId,
-            BigDecimal amount,
-            BigDecimal fromBalanceAfter,
-            BigDecimal toBalanceAfter
-    ) {}
-
-    public record TransferDetailsResponse(
-            String id,
-            String fromId,
-            String toId,
-            BigDecimal amount,
-            Instant createdAt
-    ) {}
 }

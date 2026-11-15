@@ -8,10 +8,10 @@
     <script>
       // apply the theme before first paint (no flash)
       (function () {
-        var ids = ['aurora', 'organic', 'retro', 'swiss'];
+        var ids = ['light', 'aurora', 'organic', 'retro', 'swiss'];
         var t = new URLSearchParams(location.search).get('theme');
         if (ids.indexOf(t) < 0) { try { t = localStorage.getItem('minibank.theme'); } catch (e) {} }
-        document.documentElement.dataset.theme = ids.indexOf(t) < 0 ? 'aurora' : t;
+        document.documentElement.dataset.theme = ids.indexOf(t) < 0 ? 'light' : t;
       })();
     </script>
     <title>MiniBank</title>

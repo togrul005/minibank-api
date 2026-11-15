@@ -14,13 +14,13 @@ function title(t: TransferDetails) {
 /** Compact, app-style list of movements: round icon, what happened, when, and the amount. */
 export function ActivityList({ items, label }: { items: TransferDetails[]; label: string }) {
   return (
-    <ul className="stagger flex flex-col" aria-label={label}>
+    <ul className="activity-list stagger flex flex-col" aria-label={label}>
       {items.map((t) => {
         const dir = direction(t)
         const Icon = dir === 'in' ? ArrowDownLeft : dir === 'out' ? ArrowUpRight : ArrowLeftRight
         const sign = dir === 'in' ? '+' : dir === 'out' ? '−' : ''
         return (
-          <li key={t.id} className="flex items-center gap-4 border-b border-rule py-4 last:border-b-0">
+          <li key={t.id} className="activity-row flex items-center gap-4 border-b border-rule py-4 last:border-b-0">
             <span aria-hidden="true" className={`activity-icon activity-${dir} flex size-11 shrink-0 items-center justify-center rounded-full`}>
               <Icon className="size-5" strokeWidth={2.25} />
             </span>

@@ -1,12 +1,10 @@
 import { useRef, useState, type FormEvent } from 'react'
 import { Link, useSearchParams } from 'react-router'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, ChevronDown, Delete, Wallet } from 'lucide-react'
 import { useAllAccounts, useTransfer } from '../api/queries'
 import { ApiError } from '../api/client'
 import type { TransferResult } from '../api/types'
-import {
-  BigAmount, Button, Field, LoadingLine, MoneyInput, Notice, PageTitle, Section, Select, linkButton,
-} from '../components/ui'
+import { BigAmount, Button, LoadingLine, Notice, PageTitle, linkButton } from '../components/ui'
 import { formatMoney, parseAmount } from '../lib/money'
 
 function newKey(): string {
@@ -100,76 +98,132 @@ export function TransferPage() {
   }
 
   const apiError = transfer.error instanceof ApiError ? transfer.error : null
+  const to = list.find((a) => a.id === toId)
 
   return (
-    <>
-      <PageTitle lead="Move money between your accounts.">Transfer</PageTitle>
-      <div className="grid grid-cols-1 gap-16 md:grid-cols-12 md:gap-10">
-        <form onSubmit={submit} noValidate className="flex flex-col gap-6 md:col-span-7">
-          <Section title="Details">
-            <div className="flex flex-col gap-6">
-              {apiError ? (
-                <Notice tone="error" title={apiError.status === 422 ? 'Not enough money' : 'Transfer failed'}>
-                  {apiError.message}
-                  {apiError.code === 'NETWORK' ? ' You can press Send again safely.' : null}
-                </Notice>
-              ) : null}
-              <div className="grid gap-6 sm:grid-cols-2">
-                <Field label="From" error={errors.from}>
-                  {({ inputId, describedBy, invalid }) => (
-                    <Select id={inputId} value={fromId} invalid={invalid} aria-describedby={describedBy}
-                      onChange={(e) => { setFromId(e.target.value); changed() }}>
-                      <option value="">Choose account</option>
-                      {list.map((a) => <option key={a.id} value={a.id}>{a.id} · {formatMoney(a.balance)}</option>)}
-                    </Select>
-                  )}
-                </Field>
-                <Field label="To" error={errors.to}>
-                  {({ inputId, describedBy, invalid }) => (
-                    <Select id={inputId} value={toId} invalid={invalid} aria-describedby={describedBy}
-                      onChange={(e) => { setToId(e.target.value); changed() }}>
-                      <option value="">Choose account</option>
-                      {list.filter((a) => a.id !== fromId).map((a) => (
-                        <option key={a.id} value={a.id}>{a.id} · {formatMoney(a.balance)}</option>
-                      ))}
-                    </Select>
-                  )}
-                </Field>
-              </div>
-              <Field label="Amount" help="At most 2 decimals." error={errors.amount}>
-                {({ inputId, describedBy, invalid }) => (
-                  <MoneyInput id={inputId} value={amount} placeholder="0.00" invalid={invalid} aria-describedby={describedBy}
-                    onChange={(e) => { setAmount(e.target.value); changed() }} />
-                )}
-              </Field>
-              <Button type="submit" disabled={transfer.isPending} className="self-start">
-                {transfer.isPending ? 'Sending…' : 'Send money'}
-              </Button>
-            </div>
-          </Section>
-        </form>
+    <div className="mx-auto flex max-w-[460px] flex-col gap-6">
+      <h1 className="font-display text-center text-2xl font-bold">Send money</h1>
 
-        <aside className="md:col-span-5">
-          <Section title="Summary">
-            <dl className="grid grid-cols-2 border-t border-line text-[15px]">
-              <dt className="border-b border-rule py-3 text-muted">From</dt>
-              <dd className="border-b border-rule py-3 text-right font-bold">{fromId || '—'}</dd>
-              <dt className="border-b border-rule py-3 text-muted">To</dt>
-              <dd className="border-b border-rule py-3 text-right font-bold">{toId || '—'}</dd>
-              <dt className="border-b border-rule py-3 text-muted">Amount</dt>
-              <dd className="border-b border-rule py-3 text-right font-bold tabular-nums">{parsed.ok ? formatMoney(parsed.value) : '—'}</dd>
-              <dt className="border-b border-rule py-3 text-muted">{fromId ? `${fromId} after` : 'Balance after'}</dt>
-              <dd className={`border-b border-rule py-3 text-right font-bold tabular-nums ${after !== null && after < 0 ? 'text-danger' : ''}`}>
-                {after !== null ? formatMoney(after) : '—'}
-              </dd>
-            </dl>
-            <p className="mt-6 text-sm text-muted">
-              Each transfer carries a unique Idempotency-Key. If the connection drops and you send again,
-              the money still moves only once.
+      <form onSubmit={submit} noValidate className="flex flex-col gap-6">
+        {apiError ? (
+          <Notice tone="error" title={apiError.status === 422 ? 'Not enough money' : 'Transfer failed'}>
+            {apiError.message}
+            {apiError.code === 'NETWORK' ? ' You can press Send again safely.' : null}
+          </Notice>
+        ) : null}
+
+        {/* From / To: one card, two rows */}
+        <div className="send-card rounded-box bg-surface p-5">
+          <AccountRow label="From" value={fromId} error={errors.from} balance={from?.balance}
+            options={list} onChange={(v) => { setFromId(v); changed() }} />
+          <div className="my-4 h-px bg-rule" />
+          <AccountRow label="To" value={toId} error={errors.to} balance={to?.balance}
+            options={list.filter((a) => a.id !== fromId)} onChange={(v) => { setToId(v); changed() }} />
+        </div>
+
+        {/* Big amount: a real input (type with the keyboard) plus the keypad below */}
+        <div className="flex flex-col items-center gap-2">
+          <label htmlFor="amount" className="text-sm text-muted">Amount</label>
+          <div className="flex items-baseline justify-center gap-1">
+            <span aria-hidden="true" className="font-display text-5xl font-bold text-muted">€</span>
+            <input
+              id="amount"
+              inputMode="decimal"
+              autoComplete="off"
+              placeholder="0"
+              value={amount}
+              aria-invalid={errors.amount ? true : undefined}
+              aria-describedby={errors.amount ? 'amount-error' : 'amount-help'}
+              onChange={(e) => { setAmount(e.target.value); changed() }}
+              style={{ width: `${Math.max(1, amount.length || 1) + 0.6}ch` }}
+              className="amount-display font-display min-w-[2ch] max-w-full bg-transparent text-center text-6xl font-bold tabular-nums text-ink caret-accent outline-none placeholder:text-muted"
+            />
+          </div>
+          {errors.amount ? (
+            <p id="amount-error" className="text-sm font-bold text-danger">{errors.amount}</p>
+          ) : (
+            <p id="amount-help" className="text-sm text-muted">
+              {after !== null ? <>{fromId} after: <span className="font-bold tabular-nums text-ink">{formatMoney(after)}</span></> : 'At most 2 decimals.'}
             </p>
-          </Section>
-        </aside>
+          )}
+        </div>
+
+        <Button type="submit" disabled={transfer.isPending} className="w-full min-h-13 text-base">
+          {transfer.isPending ? 'Sending…' : 'Send money'}
+        </Button>
+
+        <Keypad value={amount} onChange={(v) => { setAmount(v); changed() }} />
+
+        <p className="text-center text-sm text-muted">
+          Safe to retry: each transfer has its own Idempotency-Key, so money moves only once.
+        </p>
+      </form>
+    </div>
+  )
+}
+
+function AccountRow({ label, value, balance, options, error, onChange }: {
+  label: string
+  value: string
+  balance?: number
+  options: { id: string; balance: number }[]
+  error?: string
+  onChange: (v: string) => void
+}) {
+  const id = `acct-${label.toLowerCase()}`
+  return (
+    <div className="flex items-center gap-4">
+      <span aria-hidden="true" className="flex size-11 shrink-0 items-center justify-center rounded-full bg-neutral text-ink">
+        <Wallet className="size-5" />
+      </span>
+      <div className="min-w-0 flex-1">
+        <label htmlFor={id} className="block text-xs text-muted">{label}</label>
+        <select
+          id={id}
+          value={value}
+          aria-invalid={error ? true : undefined}
+          aria-describedby={error ? `${id}-error` : undefined}
+          onChange={(e) => onChange(e.target.value)}
+          className="w-full appearance-none bg-transparent text-base font-bold text-ink outline-none"
+        >
+          <option value="">Choose account</option>
+          {options.map((a) => <option key={a.id} value={a.id}>{a.id}</option>)}
+        </select>
+        {error ? (
+          <p id={`${id}-error`} className="text-sm font-bold text-danger">{error}</p>
+        ) : (
+          <p className="text-sm text-muted tabular-nums">{balance !== undefined ? `Balance: ${formatMoney(balance)}` : 'No account chosen'}</p>
+        )}
       </div>
-    </>
+      <ChevronDown aria-hidden="true" className="size-5 shrink-0 text-muted" />
+    </div>
+  )
+}
+
+/** On-screen number pad. Follows the same rules as typing: digits, one decimal point, two decimals. */
+function Keypad({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  function press(k: string) {
+    if (k === 'back') return onChange(value.slice(0, -1))
+    if (k === '.') return onChange(value.includes('.') ? value : (value || '0') + '.')
+    const [, dec] = value.split('.')
+    if (dec !== undefined && dec.length >= 2) return
+    if (value === '0') return onChange(k)
+    onChange(value + k)
+  }
+  const keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '0', 'back']
+  return (
+    <div className="keypad grid grid-cols-3 gap-2 rounded-box bg-surface p-3" role="group" aria-label="Number pad">
+      {keys.map((k) => (
+        <button
+          key={k}
+          type="button"
+          onClick={() => press(k)}
+          aria-label={k === 'back' ? 'Delete last digit' : k === '.' ? 'Decimal point' : undefined}
+          className="key flex min-h-13 items-center justify-center rounded-control bg-neutral text-xl font-bold text-ink transition-colors duration-150 hover:bg-rule active:bg-ink active:text-paper"
+        >
+          {k === 'back' ? <Delete aria-hidden="true" className="size-6" /> : k}
+        </button>
+      ))}
+    </div>
   )
 }

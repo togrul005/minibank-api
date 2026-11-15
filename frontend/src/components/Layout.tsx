@@ -47,7 +47,7 @@ function ApiStatus() {
         aria-hidden="true"
         className={`size-2 ${up ? 'status-dot bg-accent' : isLoading ? 'bg-rule' : 'bg-danger'}`}
       />
-      {label}
+      <span className="sr-only sm:not-sr-only">{label}</span>
     </span>
   )
 }
@@ -57,7 +57,7 @@ function ThemeSwitcher() {
   const id = useId()
   return (
     <span className="inline-flex items-center gap-2 text-sm">
-      <label htmlFor={id} className="text-muted">Theme</label>
+      <label htmlFor={id} className="sr-only text-muted sm:not-sr-only">Theme</label>
       <select
         id={id}
         value={theme}

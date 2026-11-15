@@ -4,7 +4,7 @@
 
 A concurrency-safe banking app: **Spring Boot 4 + PostgreSQL** API with a **React** frontend.
 
-![Aurora theme](docs/screenshots/MiniBank-aurora.png)
+![MiniBank](docs/screenshots/MiniBank-light-desktop.png)
 
 ## Features
 - Accounts: create, get, list (paged)
@@ -59,11 +59,12 @@ Docker must be running (Testcontainers starts a real PostgreSQL):
 ```
 
 ## Frontend
-Four switchable themes (header menu, saved in the browser, or `?theme=aurora|organic|retro|swiss` in the URL). Each one is a complete design direction with its own palette, fonts, shapes, texture and motion:
+Five switchable themes (header menu, saved in the browser, or `?theme=light|aurora|organic|retro|swiss` in the URL). Each one is a complete design direction with its own palette, fonts, shapes, texture and motion:
 
 | Theme | Look | Motion |
 |---|---|---|
-| **Aurora** (default) | Black with lightning-green (#B8FF2C) glow, glass cards, green gradient account cards (Inter) | Drifting green light, spring page and list entrances, lift on hover |
+| **Light** (default) | Soft grey page, white pill buttons, two-tone account cards, transactions as cards, Send money screen with keypad (Inter) | Lift on hover, page and row entrances |
+| **Aurora** | Black with lightning-green (#B8FF2C) glow, glass cards, green gradient account cards (Inter) | Drifting green light, spring page and list entrances, lift on hover |
 | **Organic** | Sand and earth tones, moss balance card, rounded cards, paper grain (Fraunces + Epilogue) | Slow "breathing" balance card and background shapes, gentle easing |
 | **Retro** | Synthwave terminal: black, magenta + cyan neon, scanlines, grid floor (VT323 + Space Mono) | Typewriter page titles, blinking caret, stepped entrances, moving grid |
 | **Swiss** | White, one sans family, Klein Blue, hairline rules | Rules draw in, quiet fades |

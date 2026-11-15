@@ -41,6 +41,28 @@
   color-scheme: light;
 }
 
+[data-theme="light"] {
+  --font-sans: "Inter Variable", "Inter", system-ui, sans-serif;
+  --font-display: "Inter Variable", "Inter", system-ui, sans-serif;
+  --color-paper: #ECEDF0;      /* soft grey page */
+  --color-surface: #FFFFFF;    /* white cards */
+  --color-neutral: #F2F3F6;    /* key / icon circles */
+  --color-ink: #111318;
+  --color-muted: #5B6170;      /* 5.2:1 on the grey page */
+  --color-rule: #E3E5EA;
+  --color-line: #D3D6DD;
+  --color-accent: #1E2D50;     /* navy */
+  --color-accent-ink: #2B3E6C;
+  --color-on-accent: #FFFFFF;
+  --color-positive: #15803D;
+  --color-negative: #DC2626;
+  --color-danger: #DC2626;
+  --radius-box: 20px;
+  --radius-control: 999px;
+  --radius-chip: 999px;
+  color-scheme: light;
+}
+
 [data-theme="aurora"] {
   --font-sans: "Inter Variable", "Inter", system-ui, sans-serif;
   --font-display: "Inter Variable", "Inter", system-ui, sans-serif;
@@ -192,6 +214,52 @@
 .activity-internal { background: color-mix(in srgb, var(--color-accent) 16%, transparent); color: var(--color-accent); }
 .tab-bar { background: var(--color-paper); border: 1px solid var(--color-line); }
 [data-theme="swiss"] .acct-card::after { display: none; }
+
+/* ------------------------------------------------------------------ LIGHT */
+/* Soft grey page, white pill buttons, two-tone account cards, transactions as separate cards. */
+
+[data-theme="light"] { --enter-dur: 450ms; --enter-ease: cubic-bezier(.2,.8,.2,1); }
+[data-theme="light"] .app-header { border-bottom-color: var(--color-rule); background: var(--color-paper); }
+[data-theme="light"] .section-surface { padding: 1.5rem; border-radius: var(--radius-box); background: var(--color-surface); }
+[data-theme="light"] .section-surface::before { display: none; }
+/* sections that hold cards or rows-as-cards sit directly on the grey page */
+[data-theme="light"] .section-surface:has(.acct-cards),
+[data-theme="light"] .section-surface:has(.activity-list) { background: transparent; padding: 0; }
+[data-theme="light"] .section-title { text-transform: none; letter-spacing: 0; font-size: 1.05rem; font-weight: 600; }
+
+/* balance: centred, with white pill actions under it */
+[data-theme="light"] .hero-surface { flex-direction: column; align-items: center; text-align: center; gap: 1.75rem; }
+[data-theme="light"] .hero-surface .amount-figure { letter-spacing: -0.03em; }
+[data-theme="light"] .quick-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.75rem; width: 100%; max-width: 560px; }
+@media (min-width: 768px) { [data-theme="light"] .quick-actions { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+[data-theme="light"] .qa-link {
+  flex-direction: row; justify-content: center; gap: 0.6rem; min-height: 3.25rem; padding: 0 1.25rem;
+  border-radius: 999px; background: var(--color-surface); font-weight: 600; font-size: 1rem;
+  box-shadow: 0 1px 2px rgba(17, 19, 24, 0.06); transition: transform 250ms ease, box-shadow 250ms ease;
+}
+[data-theme="light"] .qa-link:hover { transform: translateY(-2px); box-shadow: 0 8px 20px -10px rgba(17, 19, 24, 0.35); }
+[data-theme="light"] .qa-link .quick-action { width: auto; height: auto; background: transparent; border: 0; color: var(--color-ink); box-shadow: none; transform: none; }
+[data-theme="light"] .qa-link .quick-action svg { width: 1.25rem; height: 1.25rem; }
+
+/* account cards: colour on top, black strip at the bottom */
+[data-theme="light"] .acct-card { box-shadow: 0 10px 30px -14px rgba(17, 19, 24, 0.45); }
+[data-theme="light"] .acct-card-0 { background: linear-gradient(115deg, #4527B0 0%, #7B57DB 60%, #A68BEB 100%); }
+[data-theme="light"] .acct-card-1 { background: linear-gradient(115deg, #1D6E8A 0%, #2D5C93 50%, #3A2E8C 100%); }
+[data-theme="light"] .acct-card-2 { background: linear-gradient(115deg, #2F3A4F 0%, #4B5873 60%, #6B7894 100%); }
+[data-theme="light"] .acct-card-foot { margin: 0 -1.5rem -1.5rem; padding: 0.9rem 1.5rem; background: #0B0B0D; opacity: 1; }
+[data-theme="light"] .acct-card::after { right: -30%; bottom: -10%; }
+
+/* transactions: each row is its own white card with a neutral round icon */
+[data-theme="light"] .activity-list { gap: 0.6rem; }
+[data-theme="light"] .activity-row { background: var(--color-surface); border: 0; border-radius: 16px; padding: 0.9rem 1rem; }
+[data-theme="light"] .activity-icon { background: var(--color-neutral); color: var(--color-ink); }
+
+/* send money */
+[data-theme="light"] .send-card, [data-theme="light"] .keypad { box-shadow: 0 1px 2px rgba(17, 19, 24, 0.05); }
+[data-theme="light"] .btn-primary:hover:not(:disabled) { transform: translateY(-1px); }
+
+[data-theme="light"] .tab-bar { background: #FFFFFF; border-color: transparent; box-shadow: 0 10px 30px -12px rgba(17, 19, 24, 0.35); }
+[data-theme="light"] .status-dot { background: var(--color-positive); border-radius: 50%; }
 
 /* ------------------------------------------------------------------ AURORA */
 

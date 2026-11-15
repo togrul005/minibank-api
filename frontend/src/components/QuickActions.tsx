@@ -11,10 +11,10 @@ export function QuickActions({ accountId }: { accountId?: string }) {
     { to: '/history', label: 'History', Icon: Clock },
   ]
   return (
-    <ul className="stagger grid grid-cols-4 gap-3 sm:gap-6" aria-label="Quick actions">
+    <ul className="quick-actions stagger grid grid-cols-4 gap-3 sm:gap-6" aria-label="Quick actions">
       {actions.map(({ to, label, Icon, primary }) => (
         <li key={label}>
-          <Link to={to} className="group flex flex-col items-center gap-2 text-sm font-bold text-ink no-underline">
+          <Link to={to} className="qa-link group flex flex-col items-center gap-2 text-sm font-bold text-ink no-underline">
             <span
               className={`quick-action flex size-14 items-center justify-center rounded-full transition-transform duration-300 group-hover:-translate-y-1 group-active:scale-95 ${
                 primary ? 'quick-action-primary bg-accent text-on-accent' : 'border border-rule bg-neutral text-ink'

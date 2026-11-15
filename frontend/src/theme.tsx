@@ -2,6 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useState } from 'rea
 import type { ReactNode } from 'react'
 
 export const themes = [
+  { id: 'light', label: 'Light' },
   { id: 'aurora', label: 'Aurora' },
   { id: 'organic', label: 'Organic' },
   { id: 'retro', label: 'Retro' },
@@ -11,7 +12,7 @@ export const themes = [
 export type ThemeId = (typeof themes)[number]['id']
 
 const STORAGE_KEY = 'minibank.theme'
-const DEFAULT_THEME: ThemeId = 'aurora'
+const DEFAULT_THEME: ThemeId = 'light'
 
 function isTheme(v: unknown): v is ThemeId {
   return themes.some((t) => t.id === v)

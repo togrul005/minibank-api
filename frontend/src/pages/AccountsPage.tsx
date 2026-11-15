@@ -1,5 +1,5 @@
 import { Fragment, useState, type FormEvent } from 'react'
-import { Link } from 'react-router'
+import { Link, useSearchParams } from 'react-router'
 import { useAccountsPage, useCreateAccount, useDeposit, useWithdraw } from '../api/queries'
 import type { Account } from '../api/types'
 import {
@@ -147,7 +147,15 @@ function MoneyPanel({ account, mode, onClose }: {
 export function AccountsPage() {
   const [page, setPage] = useState(0)
   const { data, isLoading, error } = useAccountsPage(page, PAGE_SIZE)
-  const [open, setOpen] = useState<{ id: string; mode: 'deposit' | 'withdraw' } | null>(null)
+  // deep link from the Overview quick actions: /accounts?account=main-eur&action=deposit
+  const [params] = useSearchParams()
+  const linkedAction = params.get('action')
+  const linkedAccount = params.get('account')
+  const [open, setOpen] = useState<{ id: string; mode: 'deposit' | 'withdraw' } | null>(
+    linkedAccount && (linkedAction === 'deposit' || linkedAction === 'withdraw')
+      ? { id: linkedAccount, mode: linkedAction }
+      : null,
+  )
 
   return (
     <>

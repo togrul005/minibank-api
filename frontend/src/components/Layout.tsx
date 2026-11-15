@@ -1,14 +1,41 @@
 import { NavLink, Outlet, useLocation } from 'react-router'
 import { useId } from 'react'
+import { ArrowLeftRight, Clock, LayoutGrid, Wallet } from 'lucide-react'
 import { useHealth } from '../api/queries'
 import { themes, useTheme, type ThemeId } from '../theme'
 
 const nav = [
-  { to: '/', label: 'Overview', end: true },
-  { to: '/accounts', label: 'Accounts' },
-  { to: '/transfer', label: 'Transfer' },
-  { to: '/history', label: 'History' },
+  { to: '/', label: 'Overview', end: true, Icon: LayoutGrid },
+  { to: '/accounts', label: 'Accounts', Icon: Wallet },
+  { to: '/transfer', label: 'Transfer', Icon: ArrowLeftRight },
+  { to: '/history', label: 'History', Icon: Clock },
 ]
+
+/** Phone-only bottom tab bar (the top nav is hidden below md). */
+function TabBar() {
+  return (
+    <nav aria-label="Main" className="tab-bar fixed inset-x-3 bottom-3 z-20 rounded-box md:hidden">
+      <ul className="grid grid-cols-4">
+        {nav.map(({ to, label, end, Icon }) => (
+          <li key={to}>
+            <NavLink
+              to={to}
+              end={end}
+              className={({ isActive }) =>
+                `flex min-h-16 flex-col items-center justify-center gap-1 text-xs font-bold no-underline transition-colors duration-200 ${
+                  isActive ? 'nav-active text-accent' : 'text-muted'
+                }`
+              }
+            >
+              <Icon aria-hidden="true" className="size-6" strokeWidth={2} />
+              {label}
+            </NavLink>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  )
+}
 
 function ApiStatus() {
   const { data, isError, isLoading } = useHealth()
@@ -61,7 +88,7 @@ export function Layout() {
             <NavLink to="/" className="font-display text-xl font-bold tracking-[-0.02em] text-ink no-underline">
               MiniBank
             </NavLink>
-            <nav aria-label="Main" className="order-3 w-full md:order-none md:w-auto">
+            <nav aria-label="Main" className="hidden md:block">
               <ul className="flex gap-1 overflow-x-auto">
                 {nav.map((item) => (
                   <li key={item.to}>
@@ -86,12 +113,13 @@ export function Layout() {
             </div>
           </div>
         </header>
-        <main id="main" className="mx-auto max-w-[1200px] px-5 py-12 md:px-10 md:py-16">
+        <main id="main" className="mx-auto max-w-[1200px] px-5 pb-28 pt-10 md:px-10 md:py-16">
           {/* keyed by path so each page plays its enter animation */}
           <div key={location.pathname} className="page-enter">
             <Outlet />
           </div>
         </main>
+        <TabBar />
       </div>
     </div>
   )

@@ -1,0 +1,126 @@
+import { NavLink, Outlet, useLocation } from 'react-router'
+import { useId } from 'react'
+import { ArrowLeftRight, Clock, LayoutGrid, Wallet } from 'lucide-react'
+import { useHealth } from '../api/queries'
+import { themes, useTheme, type ThemeId } from '../theme'
+
+const nav = [
+  { to: '/', label: 'Overview', end: true, Icon: LayoutGrid },
+  { to: '/accounts', label: 'Accounts', Icon: Wallet },
+  { to: '/transfer', label: 'Transfer', Icon: ArrowLeftRight },
+  { to: '/history', label: 'History', Icon: Clock },
+]
+
+/** Phone-only bottom tab bar (the top nav is hidden below md). */
+function TabBar() {
+  return (
+    <nav aria-label="Main" className="tab-bar fixed inset-x-3 bottom-3 z-20 rounded-box md:hidden">
+      <ul className="grid grid-cols-4">
+        {nav.map(({ to, label, end, Icon }) => (
+          <li key={to}>
+            <NavLink
+              to={to}
+              end={end}
+              className={({ isActive }) =>
+                `flex min-h-16 flex-col items-center justify-center gap-1 text-xs font-bold no-underline transition-colors duration-200 ${
+                  isActive ? 'nav-active text-accent' : 'text-muted'
+                }`
+              }
+            >
+              <Icon aria-hidden="true" className="size-6" strokeWidth={2} />
+              {label}
+            </NavLink>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  )
+}
+
+function ApiStatus() {
+  const { data, isError, isLoading } = useHealth()
+  const up = data?.status === 'UP'
+  const label = isLoading ? 'Checking API…' : up ? 'API online' : isError ? 'API offline' : `API ${data?.status ?? 'unknown'}`
+  return (
+    <span className="inline-flex items-center gap-2 text-sm text-muted" aria-live="polite">
+      <span
+        aria-hidden="true"
+        className={`size-2 ${up ? 'status-dot bg-accent' : isLoading ? 'bg-rule' : 'bg-danger'}`}
+      />
+      <span className="sr-only sm:not-sr-only">{label}</span>
+    </span>
+  )
+}
+
+function ThemeSwitcher() {
+  const { theme, setTheme } = useTheme()
+  const id = useId()
+  return (
+    <span className="inline-flex items-center gap-2 text-sm">
+      <label htmlFor={id} className="sr-only text-muted sm:not-sr-only">Theme</label>
+      <select
+        id={id}
+        value={theme}
+        onChange={(e) => setTheme(e.target.value as ThemeId)}
+        className="min-h-9 rounded-control border border-rule bg-surface px-2 text-sm font-bold text-ink"
+      >
+        {themes.map((t) => (
+          <option key={t.id} value={t.id}>{t.label}</option>
+        ))}
+      </select>
+    </span>
+  )
+}
+
+export function Layout() {
+  const location = useLocation()
+  return (
+    <div className="min-h-screen">
+      {/* decorative background: gradient blobs (Aurora), grain (Organic), scanlines + grid (Retro) */}
+      <div className="theme-bg" aria-hidden="true"><span /><span /><span /></div>
+
+      <div className="app-shell">
+        <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:bg-paper focus:p-2">
+          Skip to content
+        </a>
+        <header className="app-header">
+          <div className="mx-auto flex max-w-[1200px] flex-wrap items-center gap-x-10 gap-y-3 px-5 py-4 md:px-10">
+            <NavLink to="/" className="font-display text-xl font-bold tracking-[-0.02em] text-ink no-underline">
+              MiniBank
+            </NavLink>
+            <nav aria-label="Main" className="hidden md:block">
+              <ul className="flex gap-1 overflow-x-auto">
+                {nav.map((item) => (
+                  <li key={item.to}>
+                    <NavLink
+                      to={item.to}
+                      end={item.end}
+                      className={({ isActive }) =>
+                        `inline-flex min-h-11 items-center border-b-2 px-3 text-[15px] font-bold transition-colors duration-200 ${
+                          isActive ? 'nav-active border-accent text-accent' : 'border-transparent text-ink hover:border-line'
+                        }`
+                      }
+                    >
+                      {item.label}
+                    </NavLink>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+            <div className="ml-auto flex flex-wrap items-center gap-x-6 gap-y-2">
+              <ThemeSwitcher />
+              <ApiStatus />
+            </div>
+          </div>
+        </header>
+        <main id="main" className="mx-auto max-w-[1200px] px-5 pb-28 pt-10 md:px-10 md:py-16">
+          {/* keyed by path so each page plays its enter animation */}
+          <div key={location.pathname} className="page-enter">
+            <Outlet />
+          </div>
+        </main>
+        <TabBar />
+      </div>
+    </div>
+  )
+}

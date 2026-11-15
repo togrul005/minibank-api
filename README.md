@@ -2,7 +2,9 @@
 
 ![CI](https://github.com/togrul005/minibank-api/actions/workflows/ci.yml/badge.svg)
 
-A concurrency-safe banking REST API built with **Spring Boot 4** and **PostgreSQL**.
+A concurrency-safe banking app: **Spring Boot 4 + PostgreSQL** API with a **React** frontend.
+
+![MiniBank](docs/screenshots/MiniBank-light-desktop.png)
 
 ## Features
 - Accounts: create, get, list (paged)
@@ -20,7 +22,8 @@ A concurrency-safe banking REST API built with **Spring Boot 4** and **PostgreSQ
 | Data | PostgreSQL 16, Spring Data JPA (Hibernate), Flyway migrations |
 | Docs | springdoc-openapi (Swagger UI) |
 | Tests | JUnit 5, MockMvc, Testcontainers (real PostgreSQL) |
-| DevOps | Docker, docker-compose, GitHub Actions |
+| Frontend | React 19, TypeScript, Vite, Tailwind CSS 4, TanStack Query, React Router, Vitest |
+| DevOps | Docker, docker-compose, nginx, GitHub Actions |
 
 ## Run
 
@@ -36,15 +39,50 @@ docker compose up -d db
 ```
 
 Then open:
+- **App: http://localhost:3000**
 - API: http://localhost:8080/api/v1/accounts
 - Swagger UI: http://localhost:8080/swagger-ui.html
 - Health: http://localhost:8080/actuator/health
+
+### Frontend dev server (hot reload)
+```bash
+docker compose up -d db app     # backend
+cd frontend
+npm install
+npm run dev                     # http://localhost:5173 (proxies /api to :8080)
+```
 
 ### Run tests
 Docker must be running (Testcontainers starts a real PostgreSQL):
 ```bash
 ./mvnw verify
 ```
+
+## Frontend
+Five switchable themes (header menu, saved in the browser, or `?theme=light|aurora|organic|retro|swiss` in the URL). Each one is a complete design direction with its own palette, fonts, shapes, texture and motion:
+
+| Theme | Look | Motion |
+|---|---|---|
+| **Light** (default) | Soft grey page, white pill buttons, two-tone account cards, transactions as cards, Send money screen with keypad (Inter) | Lift on hover, page and row entrances |
+| **Aurora** | Black with lightning-green (#B8FF2C) glow, glass cards, green gradient account cards (Inter) | Drifting green light, spring page and list entrances, lift on hover |
+| **Organic** | Sand and earth tones, moss balance card, rounded cards, paper grain (Fraunces + Epilogue) | Slow "breathing" balance card and background shapes, gentle easing |
+| **Retro** | Synthwave terminal: black, magenta + cyan neon, scanlines, grid floor (VT323 + Space Mono) | Typewriter page titles, blinking caret, stepped entrances, moving grid |
+| **Swiss** | White, one sans family, Klein Blue, hairline rules | Rules draw in, quiet fades |
+
+All themes: balances count up when they change, pages and table rows animate in, and everything is switched off for users with *reduce motion* turned on. Fonts are bundled with the app (no Google Fonts requests).
+
+| Page | What it does |
+|---|---|
+| Overview | Total balance, all accounts, latest movements across accounts |
+| Accounts | Open an account; deposit / withdraw inline with a live new-balance preview |
+| Transfer | From / To / Amount with validation; sends an `Idempotency-Key` so retries are safe |
+| History | Per-account movements, type filter, page size, pagination (state kept in the URL) |
+
+Also: live API status (`/actuator/health`), keyboard focus styles, labelled form errors, reduced-motion support, mobile layout.
+
+| Organic | Retro |
+|---|---|
+| ![Organic](docs/screenshots/MiniBank-organic.png) | ![Retro](docs/screenshots/MiniBank-retro.png) |
 
 ## Endpoints (`/api/v1`)
 
@@ -89,4 +127,5 @@ model/       JPA entities (Account, Transfer, IdempotencyRecord)
 repository/  Spring Data repositories
 service/     Business logic, transactions, locking
 resources/db/migration/  Flyway SQL migrations
+frontend/    React app (src/api, src/components, src/pages)
 ```
